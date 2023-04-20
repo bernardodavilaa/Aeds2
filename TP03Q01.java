@@ -2,10 +2,10 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-class TP02Q05 {
+//candance raiz
+class TP03Q01 {
     public static void main(String[] args) throws Exception {
-        Personagem pers;
+        Personagem pers,resp;
         Lista l1=new Lista();
         int contPers=0;
         String[] entrada;
@@ -29,6 +29,7 @@ class TP02Q05 {
             enderecoArq = MyIO.readLine();
         }
         int quant=MyIO.readInt();
+        l1.attUltimo();
         for(int i=0;i<quant;i++){
             enderecoArq =MyIO.readLine();
            entrada=enderecoArq.split(" ");
@@ -55,14 +56,17 @@ class TP02Q05 {
                 }
             }
             else if(entrada[0].equals("RI")){
-                l1.removerInicio();
+                resp=l1.removerInicio();
+                MyIO.println("(R) "+ resp.nome);
             }
             else if(entrada[0].equals("RF")){
-                l1.removerFim();
+                resp=l1.removerFim();
+                MyIO.println("(R) "+ resp.nome);
             }
             else if(entrada[0].equals("R*")){
                 String pos=entrada[1];
-                l1.remover(Integer.parseInt(pos));
+                resp=l1.remover(Integer.parseInt(pos));
+                MyIO.println("(R) "+ resp.nome);
             }
             else if(entrada[0].equals("I*")){
                 enderecoArq = "./personagens/" + entrada[2];
@@ -121,7 +125,6 @@ class Lista{
 		if (primeiro == ultimo) {                 
 			ultimo = tmp;
 		}
-      tmp = null;
 	}
 
     public void inserirFim(Personagem p) {
@@ -142,6 +145,7 @@ class Lista{
       tmp = null;
 		return resp;
 	}
+
 
     public Personagem removerFim() throws Exception {
 		if (primeiro == ultimo) {
@@ -216,12 +220,12 @@ class Lista{
 		System.out.println("] ");
 	}
 
-	/**
-	 * Procura um elemento e retorna se ele existe.
-	 * @param x Elemento a pesquisar.
-	 * @return <code>true</code> se o elemento existir,
-	 * <code>false</code> em caso contrario.
-	 */
+    public void attUltimo(){
+        for(Celula i=new Celula();i!=null;i=i.prox)
+        ultimo=i;
+    }
+
+	
 	public boolean pesquisar(Personagem x) {
 		boolean resp = false;
 		for (Celula i = primeiro.prox; i != null; i = i.prox) {
@@ -244,15 +248,14 @@ class Lista{
    }
 
     public void imprimir(){
-        int n=tamanho();
-        Celula i= primeiro;
-        for(int j=0;j<n;j++,i=i.prox){
-        MyIO.print("["+ i+"] ");
-        MyIO.println(" ## "+ p[j].nome + " ## " + p[j].altura + " ## " + p[j].peso + " ## " + p[j].CorDoCabelo + " ## " + p[j].CorDaPele + " ## " +
-        p[j].CorDosOlhos + " ## " + p[j].AnoNascimento + " ## " +p[j].genero + " ## " +
-        p[j].homeworld + " ##");
+        for(int j=0; primeiro.prox!=null;j++,primeiro=primeiro.prox){
+            Personagem p10=primeiro.prox.elemento;
+            MyIO.print("["+ j +"]  ");
+            MyIO.println("## " + p10.nome + " ## " + p10.altura + " ## " + p10.peso + " ## " + p10.CorDoCabelo +
+            " ## " + p10.CorDaPele + " ## " + p10.CorDosOlhos + " ## " + p10.AnoNascimento + " ## " + p10.genero + " ## " + p10.homeworld + " ##");
         }
-        }
+    }
+    
  
 }
 
@@ -311,15 +314,15 @@ class Personagem {
     }
 
     public Personagem(){
-        nome="nao tem";
+        nome="unknown";
         altura=0;
         peso=0.0;
-        CorDoCabelo="nao tem";
-        CorDaPele="nao tem";
-        CorDosOlhos="nao tem";
-        AnoNascimento="13/02/2002";
-        genero="pansexual";
-        homeworld="ouro branco";
+        CorDoCabelo="unknown";
+        CorDaPele="unknown";
+        CorDosOlhos="unknown";
+        AnoNascimento="unknown";
+        genero="unknown";
+        homeworld="unknown";
     }
 
 
@@ -432,3 +435,35 @@ class Personagem {
     }
 
 }
+/*
+/tmp/personagens/AdiGallia.txt
+/tmp/personagens/ArvelCrynyd.txt
+/tmp/personagens/AylaSecura.txt
+/tmp/personagens/BB8.txt
+/tmp/personagens/BarrissOffee.txt
+/tmp/personagens/BeruWhitesunlars.txt
+/tmp/personagens/BobaFett.txt
+/tmp/personagens/C-3PO.txt
+/tmp/personagens/Dooku.txt
+/tmp/personagens/Dormé.txt
+/tmp/personagens/Gasgano.txt
+/tmp/personagens/HanSolo.txt
+/tmp/personagens/JangoFett.txt
+/tmp/personagens/LamaSu.txt
+/tmp/personagens/LandoCalrissian.txt
+/tmp/personagens/MaceWindu.txt
+/tmp/personagens/MonMothma.txt
+/tmp/personagens/OwenLars.txt
+/tmp/personagens/PoggletheLesser.txt
+/tmp/personagens/QuarshPanaka.txt
+/tmp/personagens/R2-D2.txt
+/tmp/personagens/RaymusAntilles.txt
+/tmp/personagens/RoosTarpals.txt
+/tmp/personagens/SaeseeTiin.txt
+/tmp/personagens/SanHill.txt
+/tmp/personagens/SlyMoore.txt
+/tmp/personagens/TaunWe.txt
+/tmp/personagens/Watto.txt
+/tmp/personagens/WicketSystriWarrick.txt
+/tmp/personagens/ZamWesell.txt
+ */
