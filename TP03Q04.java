@@ -2,140 +2,88 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Arrays;
 //candance raiz
 class TP03Q04 {
     public static void main(String[] args) throws Exception {
-        Personagem pers,resp;
+        Personagem pers;
         ListaDupla l1=new ListaDupla();
-        int contPers=0;
-        String[] entrada;
         String enderecoArq = MyIO.readLine();
         while (!(enderecoArq.equals("FIM"))) {
             enderecoArq = "./personagens/" + enderecoArq;
-            // enderecoArq = ".\\personagens\\" + enderecoArq; // endereco ou nome de personagem
-            // System.out.println(enderecoArq);
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
                 String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
                 pers = new Personagem(linhaPersonagem);
-                if(contPers==0)
                 l1.inserirFim(pers);
-                else
-                l1.inserirFim(pers);
-                contPers++;
             } catch (IOException e) {
                 Personagem lixo = new Personagem();
                 l1.inserirFim(lixo);
             }
             enderecoArq = MyIO.readLine();
         }
-        int quant=MyIO.readInt();
-        for(int i=0;i<quant;i++){
-            enderecoArq =MyIO.readLine();
-           entrada=enderecoArq.split(" ");
-            if(entrada[0].equals("II")){
-                enderecoArq = "./personagens/" + entrada[1];
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
-                    String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
-                    pers = new Personagem(linhaPersonagem);
-                    l1.inserirInicio(pers);
-                } catch (IOException e) {
-                    Personagem lixo = new Personagem();
-                    l1.inserirInicio(lixo);
-                }
-            }
-            else if(entrada[0].equals("IF")){
-                enderecoArq = "./personagens/" + entrada[1];
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
-                    String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
-                    pers = new Personagem(linhaPersonagem);
-                    l1.inserirFim(pers);
-                } catch (IOException e) {
-                    Personagem lixo = new Personagem();
-                     l1.inserirFim(lixo);
-                }
-            }
-            else if(entrada[0].equals("RI")){
-                resp=l1.removerInicio();
-                MyIO.println("(R) "+ resp.nome);
-            }
-            else if(entrada[0].equals("RF")){
-                resp=l1.removerFim();
-                MyIO.println("(R) "+ resp.nome);
-            }
-            else if(entrada[0].equals("R*")){
-                String pos=entrada[1];
-                resp=l1.remover(Integer.parseInt(pos));
-                MyIO.println("(R) "+ resp.nome);
-            }
-            else if(entrada[0].equals("I*")){
-                enderecoArq = "./personagens/" + entrada[2];
-                String pos=entrada[1];
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
-                    String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
-                    pers = new Personagem(linhaPersonagem);
-                    l1.inserir(pers, Integer.parseInt(pos));
-                } catch (IOException e) {
-                    Personagem lixo = new Personagem();
-                    l1.inserir(lixo, Integer.parseInt(pos));
-                }
-            }
-        }
+        l1.quicksort();
         l1.imprimir();
     } 
 
     }
 
 
-/**
- * Celula Dupla (lista dupla dinamica)
- * @author Max do Val Machado
- * @version 2 01/2015
- */
+
 class CelulaDupla {
 	public Personagem elemento;
 	public CelulaDupla ant;
 	public CelulaDupla prox;
 
-	/**
-	 * Construtor da classe.
-	 */
+	
 	public CelulaDupla() {
 		Personagem elemento=new Personagem();
 	}
 
 
-	/**
-	 * Construtor da classe.
-	 * @param elemento int inserido na celula.
-	 */
 	public CelulaDupla(Personagem elemento) {
 		this.elemento = elemento;
 		this.ant = this.prox = null;
 	}
 }
-/**
- * Lista dupla dinamica
- * @author Max do Val Machado
- * @version 2 01/2015
- */
+
 class ListaDupla {
+
 	public CelulaDupla primeiro;
 	public CelulaDupla ultimo;
 
 
-	/**
-	 * Construtor da classe que cria uma lista dupla sem elementos (somente no cabeca).
-	 */
+    public void quicksort() {
+        CelulaDupla i = primeiro, j = ultimo;
+        CelulaDupla pivo;
+        for(int k=0;k<tamanho();k++,pivo=pivo.prox);
+        while (i != j) {
+            while (comparaCabelo(i.elemento, pivo.elemento)) i=i.prox;
+            while (comparaCabelo(j.elemento, pivo.elemento)) j=j.ant;
+            if (comparaCabelo(j.elemento, i.elemento)) {
+                swap(i, j);
+                i=i.prox;
+                j=j.prox;
+            }
+        }
+        if (esq < j)  quicksort(esq, j);
+        if (i < dir)  quicksort(i, dir);
+    }
+
+    public boolean comparaCabelo(Personagem a, Personagem b){
+
+        if(a.CorDoCabelo.compareTo(b.CorDoCabelo)<0)
+        return true;
+        else return false;
+    }
+
+	
 	public ListaDupla() {
 		primeiro = new CelulaDupla();
 		ultimo = primeiro;
 	}
 
-
-	/**
-	 * Insere um elemento na primeira posicao da lista.
-    * @param x int elemento a ser inserido.
-	 */
 	public void inserirInicio(Personagem x) {
 		CelulaDupla tmp = new CelulaDupla(x);
 
@@ -151,22 +99,13 @@ class ListaDupla {
 	}
 
 
-	/**
-	 * Insere um elemento na ultima posicao da lista.
-    * @param x int elemento a ser inserido.
-	 */
+	
 	public void inserirFim(Personagem x) {
 		ultimo.prox = new CelulaDupla(x);
       ultimo.prox.ant = ultimo;
 		ultimo = ultimo.prox;
 	}
 
-
-	/**
-	 * Remove um elemento da primeira posicao da lista.
-    * @return resp int elemento a ser removido.
-	 * @throws Exception Se a lista nao contiver elementos.
-	 */
 	public Personagem removerInicio() throws Exception {
 		if (primeiro == ultimo) {
 			throw new Exception("Erro ao remover (vazia)!");
@@ -181,11 +120,7 @@ class ListaDupla {
 	}
 
 
-	/**
-	 * Remove um elemento da ultima posicao da lista.
-    * @return resp int elemento a ser removido.
-	 * @throws Exception Se a lista nao contiver elementos.
-	 */
+	
 	public Personagem removerFim() throws Exception {
 		if (primeiro == ultimo) {
 			throw new Exception("Erro ao remover (vazia)!");
@@ -197,14 +132,7 @@ class ListaDupla {
 		return resp;
 	}
 
-
-	/**
-    * Insere um elemento em uma posicao especifica considerando que o 
-    * primeiro elemento valido esta na posicao 0.
-    * @param x int elemento a ser inserido.
-	 * @param pos int posicao da insercao.
-	 * @throws Exception Se <code>posicao</code> invalida.
-	 */
+    
    public void inserir(Personagem x, int pos) throws Exception {
 
       int tamanho = tamanho();
@@ -317,6 +245,8 @@ class ListaDupla {
       return tamanho;
    }
 
+
+
    public void imprimir(){
     for(int j=0; primeiro.prox!=null;j++,primeiro=primeiro.prox){
         Personagem p10=primeiro.prox.elemento;
@@ -326,6 +256,7 @@ class ListaDupla {
     }
 }
 }
+
 class Personagem {
     public String nome;
     public int altura;
