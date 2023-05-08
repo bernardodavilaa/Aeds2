@@ -10,9 +10,9 @@ class TP04Q02{
         ArvoreArvore a1=new ArvoreArvore();
         String enderecoArq = MyIO.readLine();
         a1.inserir(7);a1.inserir(3);a1.inserir(11);a1.inserir(1);a1.inserir(5);a1.inserir(9);a1.inserir(12);
-        a1.inserir(0); a1.inserir(2); a1.inserir(4); a1.inserir(6); a1.inserir(8); a1.inserir(10); a1.inserir(13); a1.inserir(14); a1.inserir(15);
+        a1.inserir(0); a1.inserir(2); a1.inserir(4); a1.inserir(6); a1.inserir(8); a1.inserir(10); a1.inserir(13); a1.inserir(14);
         while (!(enderecoArq.equals("FIM"))) {
-            enderecoArq = "./personagens/" + enderecoArq;
+            //enderecoArq = "./personagens/" + enderecoArq;
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
                 String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
                 pers = new Personagem(linhaPersonagem);
@@ -26,19 +26,8 @@ class TP04Q02{
         String nomePersonagem= MyIO.readLine();
         while(!(nomePersonagem.equals("FIM"))){
             MyIO.print(nomePersonagem + " ");
-            a1.mostrar();
-            enderecoArq = nomePersonagem.replaceAll(" ", "");
-            enderecoArq = enderecoArq +".txt";
-            enderecoArq = "./personagens/" + enderecoArq;
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
-                String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
-                pers = new Personagem(linhaPersonagem);
-            } catch (IOException e) {
-                Personagem lixo = new Personagem();
-                pers=lixo;
-            }
-            if(a1.pesquisar(pers))    MyIO.println("SIM");
-            else    MyIO.println("NAO");
+            if(a1.mostrar(nomePersonagem))    MyIO.println("SIM");
+            else    MyIO.println("NÃO");
             nomePersonagem= MyIO.readLine();
         }
     }
@@ -192,9 +181,9 @@ class ArvoreArvore {
 
 
 	public No inserir(Personagem x, No i) throws Exception {
-        int modAltura = (x.altura/15);
+        int modAltura = x.altura%15;
 		if (i == null) {
-         i = new No((x.altura)/15);
+         i = new No(x.altura%15);
 
       } else if (modAltura<i.elemento) {
          i.esq = inserir(x, i.esq);
@@ -213,29 +202,45 @@ class ArvoreArvore {
 
 
 
-   public void mostrar(){
+   public boolean mostrar(String nome){
+    boolean resp;
     MyIO.print("raiz ");
-      mostrar(raiz);
+      resp=mostrar(raiz, nome);
+      return resp;
    }
 
-   public void mostrar(No i){
-      if (i != null){
-          MyIO.print("esq ");
-          mostrar(i.outro);
-         mostrar(i.esq);
-         MyIO.print("dir ");
-         mostrar(i.dir);
-      }
+   public boolean mostrar(No i, String nome){
+    boolean resp=false;
+    if(i==null){
+        return false;
+    }
+        resp=mostrarNo2(i.outro, nome);
+        if(resp==true);
+        else{
+            MyIO.print("esq ");
+            resp=mostrar(i.esq, nome);
+            if(resp==false)
+            MyIO.print("dir ");
+            resp=mostrar(i.dir,nome);
+        }
+        return resp;
    }
 
-   public void mostrar(No2 i){
+   public boolean mostrarNo2(No2 i, String nome){
+    boolean resp=false;
       if (i != null){
-        MyIO.print("ESQ ");
-         mostrar(i.esq);
-         MyIO.print("DIR ");
-         mostrar(i.dir);
+          if(i.elemento.nome.equals(nome))  return true;
+            else {
+            MyIO.print("ESQ ");
+            resp=mostrarNo2(i.esq,nome);
+            if(resp!=true){
+            MyIO.print("DIR ");
+            resp=mostrarNo2(i.dir, nome);
+        }
       }
-   }
+    }
+    return resp;
+}
 
 
 	public boolean pesquisar(Personagem elemento) {
@@ -243,7 +248,7 @@ class ArvoreArvore {
 	}
 
 	public boolean pesquisar(No no, Personagem x) {
-        int modAltura=(x.altura/15);
+        int modAltura=(x.altura%15);
       boolean resp;
 		if (no == null) { 
          resp = false;
@@ -266,10 +271,10 @@ class ArvoreArvore {
          resp = false;
 
       } else if (x.compareTo(no.elemento.nome)>0) { 
-         resp = pesquisarSegundaArvore(no.esq, x); 
+         resp = pesquisarSegundaArvore(no.dir, x); 
 
       } else if (x.compareTo(no.elemento.nome)<0) { 
-         resp = pesquisarSegundaArvore(no.dir, x); 
+         resp = pesquisarSegundaArvore(no.esq, x); 
 
       } else { 
          resp = true; 
