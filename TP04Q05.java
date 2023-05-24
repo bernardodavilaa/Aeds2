@@ -9,7 +9,7 @@ class TP04Q05{
         Hash h=new Hash();
         String enderecoArq = MyIO.readLine();
         while (!(enderecoArq.equals("FIM"))) {
-            //enderecoArq = "./personagens/" + enderecoArq;
+            enderecoArq = "./personagens/" + enderecoArq;
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
                 String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
                 pers = new Personagem(linhaPersonagem);
@@ -21,13 +21,22 @@ class TP04Q05{
             enderecoArq = MyIO.readLine();
         }
         String nomePersonagem= MyIO.readLine();
-        while(!(nomePersonagem.equals("FIM"))){
-            if(h.pesquisar(nomePersonagem)) MyIO.print(" SIM");
-            else MyIO.print(" NÃO");
-            MyIO.println("");
-			nomePersonagem=MyIO.readLine();
+        while (!(nomePersonagem.equals("FIM"))){
+            String nomeFormatado= nomePersonagem.replaceAll(" ", "");
+            enderecoArq =  nomeFormatado + ".txt";
+            enderecoArq = "./personagens/" + enderecoArq;
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
+                String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
+                pers = new Personagem(linhaPersonagem);
+                if(h.pesquisar(pers)) MyIO.println( nomePersonagem + " SIM");
+                else MyIO.println( nomePersonagem + " NAO");
+            } catch (IOException e) {
+                Personagem lixo = new Personagem();
+                if(h.pesquisar(lixo)) MyIO.println( nomePersonagem + " SIM");
+                else MyIO.println( nomePersonagem + " NÃO");
+            }
+            nomePersonagem= MyIO.readLine();
         }
-         
     }
 }
 
@@ -67,34 +76,35 @@ FIM
 
  
 class Hash {
-    int tabela[];
+    Personagem tabela[];
     int m1, m2, m, reserva;
     final int NULO = -1;
+    Personagem vazio= new Personagem();
  
     public Hash() {
-       this(13, 7);
+       this(21, 9);
     }
  
     public Hash(int m1, int m2) {
        this.m1 = m1;
        this.m2 = m2;
        this.m = m1 + m2;
-       this.tabela = new int[this.m];
+       this.tabela = new Personagem[this.m];
        for (int i = 0; i < m1; i++) {
-          tabela[i] = NULO;
+          tabela[i] = new Personagem();
        }
        reserva = 0;
     }
  
-    public int h(int elemento) {
-       return elemento % m1;
+    public int h(Personagem elemento) {
+       return elemento.altura % m1;
     }
  
-    public boolean inserir(int elemento) {
+    public boolean inserir(Personagem elemento) {
        boolean resp = false;
-       if (elemento != NULO) {
+       if (!(elemento.nome.equals("unknown"))) {
           int pos = h(elemento);
-          if (tabela[pos] == NULO) {
+          if (tabela[pos].nome.equals("unknown")) {
              tabela[pos] = elemento;
              resp = true;
           } else if (reserva < m2) {
@@ -106,14 +116,14 @@ class Hash {
        return resp;
     }
  
-    public boolean pesquisar(int elemento) {
+    public boolean pesquisar(Personagem elemento) {
        boolean resp = false;
        int pos = h(elemento);
-       if (tabela[pos] == elemento) {
+       if (tabela[pos].nome.equals(elemento.nome)) {
           resp = true;
-       } else if (tabela[pos] != NULO) {
+       } else if (!(tabela[pos].nome.equals("unknown"))) {
           for (int i = 0; i < reserva; i++) {
-             if (tabela[m1 + i] == elemento) {
+             if (tabela[m1+i].nome.equals(elemento.nome)) {
                 resp = true;
                 i = reserva;
              }
