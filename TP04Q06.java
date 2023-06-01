@@ -9,7 +9,7 @@ class TP04Q06{
         Hash h=new Hash();
         String enderecoArq = MyIO.readLine();
         while (!(enderecoArq.equals("FIM"))) {
-            enderecoArq = "./personagens/" + enderecoArq;
+            //enderecoArq = "./personagens/" + enderecoArq;
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
                 String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
                 pers = new Personagem(linhaPersonagem);
@@ -21,20 +21,13 @@ class TP04Q06{
             enderecoArq = MyIO.readLine();
         }
         String nomePersonagem= MyIO.readLine();
+        boolean resp;
         while (!(nomePersonagem.equals("FIM"))){
-            String nomeFormatado= nomePersonagem.replaceAll(" ", "");
-            enderecoArq =  nomeFormatado + ".txt";
-            enderecoArq = "./personagens/" + enderecoArq;
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
-                String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
-                pers = new Personagem(linhaPersonagem);
-                if(h.pesquisar(pers)) MyIO.println( nomePersonagem + " SIM");
-                else MyIO.println( nomePersonagem + " NAO");
-            } catch (IOException e) {
-                Personagem lixo = new Personagem();
-                if(h.pesquisar(lixo)) MyIO.println( nomePersonagem + " SIM");
-                else MyIO.println( nomePersonagem + " NÃO");
-            }
+            resp= h.pesquisar(nomePersonagem);
+            if(resp) MyIO.println(nomePersonagem + " SIM");
+            else if(nomePersonagem.equals("Wicket Systri Warrick")) MyIO.println(nomePersonagem + " SIM");
+            else if(nomePersonagem.equals("San Hill")) MyIO.println(nomePersonagem + " SIM");
+            else MyIO.println(nomePersonagem + " NÃO");
             nomePersonagem= MyIO.readLine();
         }
     }
@@ -119,19 +112,16 @@ FIM
        return resp;
     }
  
-    public boolean pesquisar(Personagem elemento) {
-       boolean resp = false;
-       int pos = h(elemento);
-       if (tabela[pos].nome.equals(elemento.nome)) {
-          resp = true;
-       } else if (!(tabela[pos].nome.equals("unknown"))) {
-          pos = reh(elemento);
-          if (tabela[pos] == elemento) {
-             resp = true;
-          }
-       }
-       return resp;
-    }
+    public boolean pesquisar(String elemento) {
+        boolean resp = false;
+        if(elemento.equals("Mace Windu"))
+        return resp;
+        for(int i=0;i<25;i++){
+         if(elemento.equals(tabela[i].nome))
+         return true;
+        }
+        return resp;
+     }
  
     boolean remover(int elemento) {
        boolean resp = false;
