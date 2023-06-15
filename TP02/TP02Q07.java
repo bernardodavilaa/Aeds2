@@ -1,0 +1,238 @@
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+class TP02Q07 {
+    public static void main(String[] args) throws Exception {
+        Personagem pers;
+        Lista1 l1=new Lista1();
+        int contPers=0;
+        String enderecoArq = MyIO.readLine();
+        while (!(enderecoArq.equals("FIM"))) {
+            enderecoArq= "./personagens/"+ enderecoArq;
+            // enderecoArq = ".\\personagens\\" + enderecoArq; // endereco ou nome de personagem
+            // System.out.println(enderecoArq);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(enderecoArq), "UTF-8"))) {
+                String linhaPersonagem = br.readLine(); // abre e lê linha do arquivo
+                pers = new Personagem(linhaPersonagem);
+                l1.inserirInicio(pers);
+                contPers++;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            enderecoArq = MyIO.readLine();
+        }
+        l1.n=contPers;
+        enderecoArq=MyIO.readLine();
+        while(!(enderecoArq.equals("FIM"))){
+            if(l1.PesquisaSequencial(enderecoArq))
+            MyIO.println("SIM");
+            else
+            MyIO.println("NAO");
+            enderecoArq=MyIO.readLine();
+        }
+        
+    }
+}
+
+class Lista1{
+    public int n; // qnt elem. lista
+    public Personagem[] p;
+    public int tamanho; // tam. da lista
+
+    public Lista1(){
+        this.tamanho=500;
+        p = new Personagem[tamanho];
+        n=0;
+    }
+
+
+    public void inserirInicio(Personagem p1) throws Exception{        
+        if(n>=this.tamanho){
+            throw new Exception("ERRO! - Lista Cheia");
+        }
+        //leva elementos para o n
+        for(int i=n;i>0;i--){
+            p[i]= p[i-1];
+        }
+        p[0]=p1;
+        n++;
+    }
+
+    public boolean PesquisaSequencial(String str){
+            for (int i = 0; i < n; i++) {
+                if (p[i].nome.equals(str)) {
+                    return true; // retorna o índice do valor encontrado
+                }
+            }
+            return false; // retorna -1 se o valor não foi encontrado
+        }
+
+}
+
+class Personagem {
+    public String nome;
+    public int altura;
+    public double peso;
+    public String CorDoCabelo;
+    public String CorDaPele;
+    public String CorDosOlhos;
+    public String AnoNascimento;
+    public String genero;
+    public String homeworld;
+
+    public Personagem(){
+        nome="name";
+        altura=0;
+        peso=0.0;
+        CorDoCabelo="unknown";
+        CorDaPele="unknown";
+        CorDosOlhos="unknown";
+        AnoNascimento="unknown";
+        genero="unknown";
+        homeworld="unknown";
+    }
+
+    public boolean isNotInt(String str) {
+        try {
+            Integer.parseInt(str);
+            return false;
+        } catch (NumberFormatException e) {
+            return true;
+        }
+    }
+
+    public boolean isNotDouble(String str) {
+        try {
+            Double.parseDouble(str);
+            return false;
+        } catch (NumberFormatException e) {
+            return true;
+        }
+    }
+
+    public String formatarPeso(Object obj) {
+        String peso = obj.toString();
+        int indexOfPoint = peso.toString().indexOf(".") == -1 ? peso.length() : peso.toString().indexOf(".");
+
+        if (peso.substring(indexOfPoint, peso.length()).equals(".0")) {
+            return peso.substring(0, indexOfPoint);
+        } else {
+            return peso;
+        }
+    }
+
+       public Personagem(String endereco) {
+        String[] dados = parsePersonagem(endereco); // trocar variavel de entrada
+        setNome(dados[0]);
+        this.altura = (isNotInt(dados[1]) ? 0 : Integer.parseInt(dados[1]));
+        this.peso = (isNotDouble(dados[2]) ? 0 : Double.parseDouble(dados[2]));
+        setCorDoCabelo(dados[3]);
+        setCordaPele(dados[4]);
+        setCorDosOlhos(dados[5]);
+        setAnoNascimento(dados[6]);
+        setGenero(dados[7]);
+        setHomeWorld(dados[8]);
+    }
+
+    String[] parsePersonagem(String str) {
+
+        String[] dados = new String[9];
+        int inicio = 0;
+        int fim = -1;
+        for (int i = 0; i < 9; i++) {
+            inicio = str.indexOf("'", fim + 1) + 1;
+            fim = str.indexOf("'", inicio);
+            dados[i] = str.substring(inicio, fim);
+            switch (str.substring(inicio, fim)) {
+                case "name":
+                case "height":
+                case "mass":
+                case "hair_color":
+                case "skin_color":
+                case "eye_color":
+                case "birth_year":
+                case "gender":
+                case "homeworld":
+                    i--;
+                    break;
+            }
+        }
+        return dados;
+
+    }
+
+    String getNome() {
+        return nome;
+    }
+
+    int getAltura() {
+        return altura;
+    }
+
+    double getPeso() {
+        return peso;
+    }
+
+    String getCorDoCabelo() {
+        return CorDoCabelo;
+    }
+
+    String getCorDaPele() {
+        return CorDaPele;
+    }
+
+    String getCorDosOlhos() {
+        return CorDosOlhos;
+    }
+
+    String getAnoNascimento() {
+        return AnoNascimento;
+    }
+
+    String getGenero() {
+        return genero;
+    }
+
+    String getHomeWorld() {
+        return homeworld;
+    }
+
+    void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    void setAltura(int altura) {
+        this.altura = altura;
+    }
+
+    void setPeso(double peso) {
+        this.peso = peso;
+    }
+
+    void setCorDoCabelo(String CorDoCabelo) {
+        this.CorDoCabelo = CorDoCabelo;
+    }
+
+    void setCordaPele(String CorDaPele) {
+        this.CorDaPele = CorDaPele;
+    }
+
+    void setCorDosOlhos(String CorDosOlhos) {
+        this.CorDosOlhos = CorDosOlhos;
+    }
+
+    void setAnoNascimento(String AnoNascimento) {
+        this.AnoNascimento = AnoNascimento;
+    }
+
+    void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    void setHomeWorld(String homeworld) {
+        this.homeworld = homeworld;
+    }
+
+}
